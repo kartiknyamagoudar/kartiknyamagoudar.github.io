@@ -138,6 +138,7 @@ nav {
     padding: 30px;
     border-radius: 10px;
     margin-bottom: 20px; 
+    margin: 0 auto 20px auto;
     display: block;
     border: 1px solid #333;
     transition: all 0.4s ease;
