@@ -2,22 +2,207 @@
 <html>
 <head>
   <title>Spotify Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      margin: 0;
+      background: #f9f9f9;
+      color: #222;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    .container {
+      display: flex;
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .left-column, .right-column {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .left-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-height: 600px;
+    }
+    .panel {
+      background: #f0f0f0;
+      border-radius: 6px;
+      padding: 15px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      border-bottom: 2px solid #1DB954;
+      padding-bottom: 5px;
+      color: #1DB954;
+    }
+    .track, .artist {
+      margin-bottom: 10px;
+      font-size: 0.95em;
+    }
+    .track:last-child, .artist:last-child {
+      margin-bottom: 0;
+    }
+    .right-column {
+      flex: 1;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      justify-content: flex-start;
+    }
+    .now-playing-title {
+      font-size: 1.5em;
+      font-weight: 700;
+      margin-bottom: 15px;
+      border-bottom: 3px solid #1DB954;
+      padding-bottom: 8px;
+      width: 100%;
+      color: #1DB954;
+    }
+    .album-art {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      margin-bottom: 20px;
+    }
+    .now-playing-info {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .now-playing-artist {
+      font-size: 1em;
+      font-weight: 400;
+      color: #555;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .right-column {
+        max-width: 100%;
+        margin-top: 30px;
+      }
+      .left-column {
+        max-height: none;
+      }
+      .panel {
+        max-height: 200px;
+      }
+    }
+  </style>
 </head>
-<body style="font-family: Arial; padding: 30px;">
+<body>
   <h1>🎵 My Spotify Data</h1>
-  <pre id="spotify-data">Loading...</pre>
+  <div class="container">
+    <div class="left-column">
+      <div class="panel" id="top-tracks-panel">
+        <h2>Top Tracks</h2>
+        <div id="top-tracks-list">Loading...</div>
+      </div>
+      <div class="panel" id="followed-artists-panel">
+        <h2>Followed Artists</h2>
+        <div id="followed-artists-list">Loading...</div>
+      </div>
+    </div>
+    <div class="right-column">
+      <div class="now-playing-title">Now Playing</div>
+      <img id="album-art" class="album-art" src="" alt="Album Art" style="display:none;">
+      <div id="now-playing-info" style="display:none;">
+        <div class="now-playing-info" id="now-playing-track"></div>
+        <div class="now-playing-artist" id="now-playing-artist"></div>
+      </div>
+      <div id="now-playing-none" style="color:#888; font-style:italic;">No track currently playing.</div>
+    </div>
+  </div>
 
   <script>
-   fetch("https://spotify-api-backend-jvrj.onrender.com/spotify")
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("spotify-data").textContent =
-      JSON.stringify(data, null, 2);
-  })
-  .catch(err => {
-    document.getElementById("spotify-data").textContent =
-      "Error fetching Spotify data: " + err;
-  });
+    fetch("https://spotify-api-backend-jvrj.onrender.com/spotify")
+    .then(res => res.json())
+    .then(data => {
+      // Clear loading text
+      const topTracksList = document.getElementById("top-tracks-list");
+      const followedArtistsList = document.getElementById("followed-artists-list");
+      topTracksList.textContent = "";
+      followedArtistsList.textContent = "";
+
+      // Populate Top Tracks
+      if (data.top_tracks && data.top_tracks.length > 0) {
+        data.top_tracks.forEach(track => {
+          const trackDiv = document.createElement("div");
+          trackDiv.className = "track";
+          trackDiv.textContent = track.name + " — " + (track.artists ? track.artists.map(a => a.name).join(", ") : "");
+          topTracksList.appendChild(trackDiv);
+        });
+      } else {
+        topTracksList.textContent = "No top tracks available.";
+      }
+
+      // Populate Followed Artists
+      if (data.followed_artists && data.followed_artists.length > 0) {
+        data.followed_artists.forEach(artist => {
+          const artistDiv = document.createElement("div");
+          artistDiv.className = "artist";
+          artistDiv.textContent = artist.name;
+          followedArtistsList.appendChild(artistDiv);
+        });
+      } else {
+        followedArtistsList.textContent = "No followed artists available.";
+      }
+
+      // Populate Now Playing
+      const nowPlayingTrack = document.getElementById("now-playing-track");
+      const nowPlayingArtist = document.getElementById("now-playing-artist");
+      const albumArt = document.getElementById("album-art");
+      const nowPlayingInfo = document.getElementById("now-playing-info");
+      const nowPlayingNone = document.getElementById("now-playing-none");
+
+      if (data.now_playing && data.now_playing.is_playing) {
+        nowPlayingNone.style.display = "none";
+        nowPlayingInfo.style.display = "block";
+        albumArt.style.display = "block";
+
+        nowPlayingTrack.textContent = data.now_playing.item.name || "Unknown Track";
+        if (data.now_playing.item.artists && data.now_playing.item.artists.length > 0) {
+          nowPlayingArtist.textContent = data.now_playing.item.artists.map(a => a.name).join(", ");
+        } else {
+          nowPlayingArtist.textContent = "Unknown Artist";
+        }
+        if (data.now_playing.item.album && data.now_playing.item.album.images && data.now_playing.item.album.images.length > 0) {
+          albumArt.src = data.now_playing.item.album.images[0].url;
+          albumArt.alt = "Album art for " + (data.now_playing.item.name || "track");
+        } else {
+          albumArt.src = "";
+          albumArt.alt = "";
+          albumArt.style.display = "none";
+        }
+      } else {
+        nowPlayingInfo.style.display = "none";
+        albumArt.style.display = "none";
+        nowPlayingNone.style.display = "block";
+      }
+    })
+    .catch(err => {
+      document.getElementById("top-tracks-list").textContent = "Error fetching data: " + err;
+      document.getElementById("followed-artists-list").textContent = "Error fetching data: " + err;
+      const nowPlayingNone = document.getElementById("now-playing-none");
+      nowPlayingNone.textContent = "Error fetching data: " + err;
+    });
   </script>
 </body>
 </html>
