@@ -53,6 +53,7 @@
       <li><a href="#about">About Me</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#spotify">Spotify API Integration</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
@@ -176,6 +177,17 @@
     </div>
   </section>
 
+   <!-- ✅ NEW SPOTIFY SECTION ADDED BELOW -->
+   <section id="spotify" class="spotify section" style="padding: 50px; background: #000000; text-align: center;">
+    <h2 style="color: #15ec61; font-size: 2em;">🎧 Spotify Live Data</h2>
+    <p style="color:#ffffff;">See my currently playing track and top Spotify insights below - live from my integrated API!</p>
+    <iframe 
+      src="https://kartiknyamagoudar.github.io/spotify.html"
+      style="width:90%; height:600px; border: none; border-radius: 10px; margin-top: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"
+      title="Live Spotify Data">
+    </iframe>
+  </section>
+
   <!-- CONTACT -->
   <section id="contact" class="contact section">
     <h2>Contact Me</h2>
@@ -202,6 +214,15 @@
   </section>
 
   <script>
+    document.addEventListener("scroll", () => {
+      document.querySelectorAll(".section").forEach(sec => {
+        const sectionTop = sec.getBoundingClientRect().top;
+        if (sectionTop < window.innerHeight - 100) {
+          sec.classList.add("visible");
+        }
+      });
+    });
+
     document.addEventListener("scroll", () => {
       document.querySelectorAll(".section").forEach(sec => {
         const sectionTop = sec.getBoundingClientRect().top;
