@@ -8,16 +8,16 @@
   <pre id="spotify-data">Loading...</pre>
 
   <script>
-    fetch("https://spotify-api-backend.onrender.com/spotify")
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("spotify-data").textContent =
-          JSON.stringify(data, null, 2);
-      })
-      .catch(err => {
-        document.getElementById("spotify-data").textContent =
-          "Error fetching Spotify data: " + err;
-      });
+   fetch("https://spotify-api-backend-jvrj.onrender.com/spotify")
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("spotify-data").textContent =
+      JSON.stringify(data, null, 2);
+  })
+  .catch(err => {
+    document.getElementById("spotify-data").textContent =
+      "Error fetching Spotify data: " + err;
+  });
   </script>
 </body>
 </html>
