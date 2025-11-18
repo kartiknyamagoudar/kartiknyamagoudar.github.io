@@ -56,6 +56,11 @@
       <li><a href="#spotify">Spotify API Integration</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+
+    <div class="hamburger">
+      <i class="fas fa-bars"></i>
+    </div>
+
   </nav>
 
   <!-- HERO SECTION -->
@@ -231,6 +236,14 @@
         }
       });
     });
+
+    const hamburger = document.querySelector('.hamburger');
+  const navLinks = document.querySelector('.nav-links');
+
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    hamburger.classList.toggle('open');
+  });
     </script>
   
 </body>
